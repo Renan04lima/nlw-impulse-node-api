@@ -1,5 +1,5 @@
 
-import { Controller } from '@/shared/protocols/controller'
+import { Controller } from '@/application/protocols/controller'
 import { Request, Response } from 'express'
 
 export const adaptRoute = (controller: Controller) => {
