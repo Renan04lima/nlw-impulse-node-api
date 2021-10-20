@@ -1,4 +1,4 @@
-import { env } from '@/config/env'
+import { env } from '@/main/config/env'
 import { Router } from 'express'
 
 export default (router: Router): void => {
