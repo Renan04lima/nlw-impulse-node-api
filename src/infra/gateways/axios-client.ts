@@ -9,7 +9,8 @@ export class AxiosHttpClient implements HttpGetClient, HttpPostClient {
   }
 
   async post ({ url, body, params }: HttpPostClient.Input): Promise<any> {
-    const result = await axios.post(url, body,{ params })
+    const headers = { Accept: 'application/json' }
+    const result = await axios.post(url, body,{ params, headers })
     return result.data
   }
 }
