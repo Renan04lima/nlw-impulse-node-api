@@ -9,9 +9,11 @@ describe('AxiosHttpClient', () => {
   let fakeAxios: jest.Mocked<typeof axios>
   let url: string
   let params: object
+  let body: object
 
   beforeAll(() => {
     params = { any: 'any' }
+    body = { any: 'any' }
     fakeAxios = axios as jest.Mocked<typeof axios>
     fakeAxios.get.mockResolvedValue({
       status: 200,
@@ -45,6 +47,15 @@ describe('AxiosHttpClient', () => {
       const promise = sut.get({ url, params })
 
       await expect(promise).rejects.toThrow(new Error('http_error'))
+    })
+  })
+
+  describe('post', () => {
+    it('should call post with correct input', async () => {
+      await sut.post({ url, body, params })
+
+      expect(fakeAxios.post).toHaveBeenCalledWith(url, body ,{ params })
+      expect(fakeAxios.post).toHaveBeenCalledTimes(1)
     })
   })
 })
