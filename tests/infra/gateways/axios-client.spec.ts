@@ -19,6 +19,10 @@ describe('AxiosHttpClient', () => {
       status: 200,
       data: 'any_data'
     })
+    fakeAxios.post.mockResolvedValue({
+      status: 200,
+      data: 'any_data'
+    })
   })
 
   beforeEach(() => {
@@ -56,6 +60,12 @@ describe('AxiosHttpClient', () => {
 
       expect(fakeAxios.post).toHaveBeenCalledWith(url, body ,{ params })
       expect(fakeAxios.post).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return data on success', async () => {
+      const result = await sut.post({ url, body, params })
+
+      expect(result).toEqual('any_data')
     })
   })
 })
