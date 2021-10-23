@@ -3,8 +3,8 @@ import { HttpGetClient, HttpPostClient } from '@/infra/gateways/client'
 import axios from 'axios'
 
 export class AxiosHttpClient implements HttpGetClient, HttpPostClient {
-  async get ({ url, params }: HttpGetClient.Input): Promise<any> {
-    const result = await axios.get(url, { params })
+  async get ({ url, params, headers }: HttpGetClient.Input): Promise<any> {
+    const result = await axios.get(url, { params, headers })
     return result.data
   }
 
