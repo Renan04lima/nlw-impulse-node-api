@@ -4,7 +4,7 @@ import faker from 'faker'
 import { mock, MockProxy } from 'jest-mock-extended'
 
 describe('GitHubApi', () => {
-  let code: string, urlPostClient: string, clientId: string, clientSecret: string, urlGetClient: string, headers: object
+  let code: string, urlPostClient: string, clientId: string, clientSecret: string, urlGetClient: string, headers: object, fakeUser: object
   let sut: GitHubApi
   let postClient: MockProxy<HttpPostClient>
   let getClient: MockProxy<HttpGetClient>
@@ -19,16 +19,22 @@ describe('GitHubApi', () => {
     headers = {
       authorization: 'Bearer ' + 'valid_token'
     }
+    fakeUser = {
+      id: faker.datatype.number(),
+      name: faker.name.findName(),
+      login: faker.internet.email(),
+      avatar_url: faker.image.avatar()
+    }
   })
 
   beforeEach(() => {
     postClient.post.mockResolvedValue({
       access_token: 'valid_token'
     })
+    getClient.get.mockResolvedValue(fakeUser)
+    code = faker.datatype.string()
 
     sut = new GitHubApi(postClient, getClient,clientId, clientSecret)
-
-    code = faker.datatype.string()
   })
 
   describe('load', () => {
@@ -54,6 +60,12 @@ describe('GitHubApi', () => {
         params: null,
         headers
       })
+    })
+
+    it('should return github user', async () => {
+      const result = await sut.load({ code })
+
+      expect(result).toEqual(fakeUser)
     })
   })
 })
