@@ -67,5 +67,13 @@ describe('GitHubApi', () => {
 
       expect(result).toEqual(fakeUser)
     })
+
+    it('should return undefined if HttpGetClient throws', async () => {
+      getClient.get.mockRejectedValueOnce(new Error('github_error'))
+
+      const githubUser = await sut.load({ code })
+
+      expect(githubUser).toBeUndefined()
+    })
   })
 })
