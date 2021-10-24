@@ -5,9 +5,9 @@ export interface LoadGithubUser {
 export namespace LoadGithubUser {
   export type Input = {code: string}
   export type Output = {
-    id: string
+    id: number
     name: string
     login: string
     avatar_url: string
-  }
+  } | undefined
 }
