@@ -1,7 +1,7 @@
 import { AuthenticateUserService } from '@/application/services/authenticate-user-service'
-import { LoadGithubUser } from '@/domain/gateways/loadGithubUser'
 import { mock, MockProxy } from 'jest-mock-extended'
 import faker from 'faker'
+import { LoadGithubUser } from '@/domain/contracts/gateways/load-github-user'
 
 describe('AuthenticateUserService', () => {
   let code: string
@@ -21,4 +21,6 @@ describe('AuthenticateUserService', () => {
 
     expect(loadGithubUser.load).toHaveBeenCalledWith({ code })
   })
+
+  test.todo('should throw AuthenticateError if LoadGithubUser return undefined')
 })

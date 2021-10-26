@@ -1,4 +1,4 @@
-import { LoadGithubUser } from '@/domain/gateways/loadGithubUser'
+import { LoadGithubUser } from '@/domain/contracts/gateways/load-github-user'
 import { Authenticate } from '@/domain/usecases/authenticate'
 
 export class AuthenticateUserService implements Authenticate {
