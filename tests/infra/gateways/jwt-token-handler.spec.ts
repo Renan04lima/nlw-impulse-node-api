@@ -34,5 +34,11 @@ describe('JwtTokenHandler', () => {
       expect(fakeJwt.sign).toHaveBeenCalledWith({ key }, secret, { expiresIn: 1 })
       expect(fakeJwt.sign).toHaveBeenCalledTimes(1)
     })
+
+    it('should return a token', async () => {
+      const generatedToken = await sut.generate({ key, expirationInMs })
+
+      expect(generatedToken).toBe(token)
+    })
   })
 })
