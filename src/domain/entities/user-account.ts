@@ -1,5 +1,5 @@
 export type UserAccount = {
-  id: string
+  id: number
   github_id: number
   login: string
   avatar_url: string
