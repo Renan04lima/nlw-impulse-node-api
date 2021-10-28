@@ -10,10 +10,11 @@ describe('AuthenticateUserService', () => {
   let code: string
   let loadGithubUser: MockProxy<LoadGithubUser>
   let saveWithGithub: MockProxy<SaveWithGithub>
-  let tokenGenerator: TokenGenerator
+  let tokenGenerator: MockProxy<TokenGenerator>
   let sut: AuthenticateUserService
   let fakeGithubAccount: LoadGithubUser.Output
   let fakeUser: SaveWithGithub.Output
+  let fakeAccessToken: string
 
   beforeAll(() => {
     loadGithubUser = mock()
@@ -22,12 +23,16 @@ describe('AuthenticateUserService', () => {
   })
 
   beforeEach(() => {
+    code = faker.datatype.string()
+
     fakeGithubAccount = {
       id: faker.datatype.number(),
       login: faker.internet.email(),
       avatar_url: faker.image.avatar(),
       name: faker.name.findName()
     }
+    loadGithubUser.load.mockResolvedValue(fakeGithubAccount)
+
     fakeUser = {
       id: faker.datatype.number(),
       github_id: fakeGithubAccount.id,
@@ -35,14 +40,16 @@ describe('AuthenticateUserService', () => {
       avatar_url: fakeGithubAccount.avatar_url,
       name: fakeGithubAccount.name
     }
-    code = faker.datatype.string()
-    loadGithubUser.load.mockResolvedValue(fakeGithubAccount)
     saveWithGithub.save.mockResolvedValue(fakeUser)
+
+    fakeAccessToken = faker.datatype.string()
+    tokenGenerator.generate.mockResolvedValue(fakeAccessToken)
 
     sut = new AuthenticateUserService(
       loadGithubUser,
       saveWithGithub,
-      tokenGenerator)
+      tokenGenerator
+    )
   })
 
   test('should call LoadGithubUser with correct input', async () => {
@@ -70,6 +77,15 @@ describe('AuthenticateUserService', () => {
     expect(tokenGenerator.generate).toHaveBeenCalledWith({
       key: fakeUser.id.toString(),
       expirationInMs: AccessToken.expirationInMs
+    })
+  })
+
+  test('should return accessToken and user on success', async () => {
+    const result = await sut.auth({ code })
+
+    expect(result).toEqual({
+      accessToken: fakeAccessToken,
+      user: fakeUser
     })
   })
 })
