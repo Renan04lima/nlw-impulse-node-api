@@ -3,7 +3,7 @@ module.exports = {
   collectCoverageFrom: [
     '<rootDir>/src/**/*.ts',
     '!<rootDir>/src/main/**',
-    '!<rootDir>/src/shared/**'
+    '!<rootDir>/src/infra/repos/postgres/repository.ts'
   ],
   coverageDirectory: 'coverage',
   coverageProvider: 'babel',
