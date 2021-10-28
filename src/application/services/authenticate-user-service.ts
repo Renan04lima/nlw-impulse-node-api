@@ -21,8 +21,8 @@ export class AuthenticateUserService implements Authenticate {
       avatar_url
     })
 
-    await this.tokenGenerator.generate({ key: user.id.toString(), expirationInMs: AccessToken.expirationInMs })
+    const accessToken = await this.tokenGenerator.generate({ key: user.id.toString(), expirationInMs: AccessToken.expirationInMs })
 
-    return null
+    return { accessToken, user }
   }
 }
