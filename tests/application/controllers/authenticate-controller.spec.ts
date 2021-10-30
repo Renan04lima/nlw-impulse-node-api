@@ -1,31 +1,28 @@
 import { AuthenticateController } from '@/application/controllers/authenticate-controller'
-import { AuthenticateSpy } from '@/tests/application/mocks/mock-authenticate-usecase'
+import { AuthenticateUserService } from '@/application/services/authenticate-user-service'
 import faker from 'faker'
+import { mock, MockProxy } from 'jest-mock-extended'
 
 const mockRequest = (): AuthenticateController.Request => ({
   code: faker.datatype.string()
 })
 
-type SutTypes = {
-  sut: AuthenticateController
-  authenticateSpy: AuthenticateSpy
-}
-
-const makeSut = (): SutTypes => {
-  const authenticateSpy = new AuthenticateSpy()
-  const sut = new AuthenticateController(authenticateSpy)
-  return {
-    sut,
-    authenticateSpy
-  }
-}
-
 describe('AuthenticateController', () => {
+  let sut: AuthenticateController
+  let authenticateUserService: MockProxy<AuthenticateUserService>
+
+  beforeAll(() => {
+    authenticateUserService = mock()
+  })
+
+  beforeEach(async () => {
+    sut = new AuthenticateController(authenticateUserService)
+  })
+
   test('should call Authenticate with correct values', async () => {
-    const { sut, authenticateSpy } = makeSut()
     const request = mockRequest()
     await sut.handle(request)
 
-    expect(authenticateSpy.params).toEqual(request)
+    expect(authenticateUserService.auth).toHaveBeenCalledWith(request)
   })
 })
