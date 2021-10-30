@@ -1,5 +1,5 @@
 import { AuthenticateController } from '@/application/controllers/authenticate-controller'
-import { ok } from '@/application/helpers/http'
+import { ok, serverError } from '@/application/helpers/http'
 import { AuthenticateUserService } from '@/application/services/authenticate-user-service'
 import { UserAccount } from '@/domain/entities/user-account'
 import faker from 'faker'
@@ -26,7 +26,7 @@ describe('AuthenticateController', () => {
   })
 
   beforeEach(async () => {
-    authenticateUserService.auth.mockResolvedValueOnce({
+    authenticateUserService.auth.mockResolvedValue({
       accessToken: 'any_token',
       user: fakerUser
     })
@@ -38,6 +38,14 @@ describe('AuthenticateController', () => {
     await sut.handle(request)
 
     expect(authenticateUserService.auth).toHaveBeenCalledWith(request)
+  })
+
+  test('should return 500 on infra error', async () => {
+    const error = new Error('infra_error')
+    authenticateUserService.auth.mockRejectedValueOnce(error)
+    const result = await sut.handle(mockRequest())
+
+    expect(result).toEqual(serverError(error))
   })
 
   test('should return 200 on success', async () => {
