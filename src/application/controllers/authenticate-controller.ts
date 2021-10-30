@@ -1,7 +1,7 @@
 import { Authenticate } from '@/domain/usecases/authenticate'
 import { Controller } from '@/application/protocols/controller'
 import { HttpResponse } from '@/application/protocols/http'
-import { ok } from '@/application/helpers/http'
+import { ok, serverError } from '@/application/helpers/http'
 
 export class AuthenticateController implements Controller {
   constructor (
@@ -10,8 +10,12 @@ export class AuthenticateController implements Controller {
 
   async handle (request: AuthenticateController.Request): Promise<HttpResponse> {
     const { code } = request
-    const result = await this.authenticate.auth({ code })
-    return ok(result)
+    try {
+      const result = await this.authenticate.auth({ code })
+      return ok(result)
+    } catch (error) {
+      return serverError(error)
+    }
   }
 }
 export namespace AuthenticateController {
