@@ -1,5 +1,7 @@
 import { AuthenticateController } from '@/application/controllers/authenticate-controller'
+import { ok } from '@/application/helpers/http'
 import { AuthenticateUserService } from '@/application/services/authenticate-user-service'
+import { UserAccount } from '@/domain/entities/user-account'
 import faker from 'faker'
 import { mock, MockProxy } from 'jest-mock-extended'
 
@@ -10,12 +12,24 @@ const mockRequest = (): AuthenticateController.Request => ({
 describe('AuthenticateController', () => {
   let sut: AuthenticateController
   let authenticateUserService: MockProxy<AuthenticateUserService>
+  let fakerUser: UserAccount
 
   beforeAll(() => {
     authenticateUserService = mock()
+    fakerUser = {
+      id: 1,
+      avatar_url: 'any_url',
+      github_id: 1,
+      login: 'any_login',
+      name: 'any_name'
+    }
   })
 
   beforeEach(async () => {
+    authenticateUserService.auth.mockResolvedValueOnce({
+      accessToken: 'any_token',
+      user: fakerUser
+    })
     sut = new AuthenticateController(authenticateUserService)
   })
 
@@ -24,5 +38,14 @@ describe('AuthenticateController', () => {
     await sut.handle(request)
 
     expect(authenticateUserService.auth).toHaveBeenCalledWith(request)
+  })
+
+  test('should return 200 on success', async () => {
+    const result = await sut.handle(mockRequest())
+
+    expect(result).toEqual(ok({
+      accessToken: 'any_token',
+      user: fakerUser
+    }))
   })
 })
