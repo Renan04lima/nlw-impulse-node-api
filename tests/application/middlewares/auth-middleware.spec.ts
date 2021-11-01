@@ -3,9 +3,16 @@ import { AuthMiddleware } from '@/application/middlewares'
 
 describe('AuthMiddleware', () => {
   let sut: AuthMiddleware
+  let authorize: jest.Mock
+  let authorization: string
+
+  beforeAll(() => {
+    authorization = 'any_string'
+    authorize = jest.fn()
+  })
 
   beforeEach(() => {
-    sut = new AuthMiddleware()
+    sut = new AuthMiddleware(authorize)
   })
   test('should return 403 if authorization is null', async () => {
     const result = await sut.handle({ authorization: null as any })
@@ -23,5 +30,12 @@ describe('AuthMiddleware', () => {
     const httpResponse = await sut.handle({ authorization: undefined as any })
 
     expect(httpResponse).toEqual(forbidden())
+  })
+
+  it('should call Authorize with correct input',async () => {
+    await sut.handle({ authorization })
+
+    expect(authorize).toHaveBeenCalledWith({ token: authorization })
+    expect(authorize).toHaveBeenCalledTimes(1)
   })
 })
