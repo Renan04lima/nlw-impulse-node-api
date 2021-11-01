@@ -1,4 +1,4 @@
-import { forbidden } from '@/application/helpers/http'
+import { forbidden, ok } from '@/application/helpers/http'
 import { AuthMiddleware } from '@/application/middlewares'
 
 describe('AuthMiddleware', () => {
@@ -8,7 +8,7 @@ describe('AuthMiddleware', () => {
 
   beforeAll(() => {
     authorization = 'any_string'
-    authorize = jest.fn()
+    authorize = jest.fn().mockResolvedValue('any_user_id')
   })
 
   beforeEach(() => {
@@ -45,5 +45,11 @@ describe('AuthMiddleware', () => {
     const httpResponse = await sut.handle({ authorization })
 
     expect(httpResponse).toEqual(forbidden())
+  })
+
+  it('should return 200 with userId on success', async () => {
+    const httpResponse = await sut.handle({ authorization })
+
+    expect(httpResponse).toEqual(ok('any_user_id'))
   })
 })
