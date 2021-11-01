@@ -1,4 +1,4 @@
-import { forbidden } from '@/application/helpers/http'
+import { forbidden, ok } from '@/application/helpers/http'
 import { HttpResponse } from '@/application/protocols/http'
 import { Middleware } from '@/application/protocols/middleware'
 
@@ -9,7 +9,8 @@ export class AuthMiddleware implements Middleware {
   async handle ({ authorization }: Request): Promise<HttpResponse> {
     if (!this.validate({ authorization })) { return forbidden() }
     try {
-      await this.authorize({ token: authorization })
+      const userId = await this.authorize({ token: authorization })
+      return ok(userId)
     } catch {
       return forbidden()
     }
