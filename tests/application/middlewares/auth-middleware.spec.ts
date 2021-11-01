@@ -38,4 +38,12 @@ describe('AuthMiddleware', () => {
     expect(authorize).toHaveBeenCalledWith({ token: authorization })
     expect(authorize).toHaveBeenCalledTimes(1)
   })
+
+  it('should return 403 if Authorize throws', async () => {
+    authorize.mockRejectedValueOnce(new Error('any_error'))
+
+    const httpResponse = await sut.handle({ authorization })
+
+    expect(httpResponse).toEqual(forbidden())
+  })
 })
